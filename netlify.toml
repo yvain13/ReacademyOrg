@@ -11,8 +11,17 @@
 
 [functions]
   node_bundler = "esbuild"
+  included_files = ["package.json"]
 
 [[redirects]]
   from = "/api/*"
-  to = "/.netlify/functions/:splat"
+  to = "/.netlify/functions/api/:splat"
   status = 200
+  force = true
+
+[[headers]]
+  for = "/api/*"
+    [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
+    Access-Control-Allow-Headers = "X-Requested-With, Content-Type, Accept"
