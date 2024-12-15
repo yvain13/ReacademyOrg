@@ -1,3 +1,20 @@
+* {
+  scrollbar-width: thin;
+}
+
+*::-webkit-scrollbar {
+  width: 4px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+}
+
 .perspective-1000 {
   perspective: 1000px;
   margin-bottom: 0.5rem;
@@ -44,13 +61,13 @@
   font-size: 0.95rem;
   line-height: 1.4;
   margin-bottom: 0.5rem;
-  color: white;
+  color: #ffffff;
 }
 
 .card-answer {
   font-size: 0.9rem;
   line-height: 1.4;
-  color: white;
+  color: #ffffff;
 }
 
 .card-label {
@@ -61,14 +78,12 @@
   color: rgba(255, 255, 255, 0.7);
 }
 
-/* Ensure text stays within card boundaries */
 .text-center.z-10.w-full {
   max-height: calc(100% - 1rem);
   overflow-y: auto;
-  padding-right: 4px; /* Space for scrollbar */
+  padding-right: 4px;
 }
 
-/* Custom scrollbar styling */
 .text-center.z-10.w-full::-webkit-scrollbar {
   width: 4px;
 }
@@ -82,7 +97,6 @@
   border-radius: 4px;
 }
 
-/* Upload section styles */
 .upload-section {
   flex: 1;
   overflow-y: auto;

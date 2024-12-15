@@ -2,10 +2,10 @@
 module.exports = {
   darkMode: ["class"],
   content: [
-    './pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './components/**/*.{js,ts,jsx,tsx,mdx}',
-    './app/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/**/*.{js,jsx}',
+    "./pages/**/*.{js,jsx}",
+    "./components/**/*.{js,jsx}",
+    "./app/**/*.{js,jsx}",
+    "./src/**/*.{js,jsx}",
   ],
   theme: {
     container: {
@@ -58,12 +58,12 @@ module.exports = {
       },
       keyframes: {
         "accordion-down": {
-          from: { height: 0 },
+          from: { height: "0" },
           to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
           from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: 0 },
+          to: { height: "0" },
         },
         blob: {
           "0%": {
@@ -80,43 +80,56 @@ module.exports = {
           },
         },
         float: {
-          '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-20px)' },
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-20px)" },
         },
         fadeIn: {
-          '0%': { opacity: '0', transform: 'translateY(20px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
+          "0%": { opacity: "0", transform: "translateY(20px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         blob: "blob 7s infinite",
-        'float': 'float 3s ease-in-out infinite',
-        'float-slow': 'float 6s ease-in-out infinite',
-        'float-delayed': 'float 6s ease-in-out infinite 2s',
-        'bounce-slow': 'bounce 3s ease-in-out infinite',
-        'fade-in': 'fadeIn 1s ease-out forwards',
+        float: "float 3s ease-in-out infinite",
+        "float-slow": "float 6s ease-in-out infinite",
+        "float-delayed": "float 6s ease-in-out infinite 2s",
+        "bounce-slow": "bounce 3s ease-in-out infinite",
+        "fade-in": "fadeIn 1s ease-out forwards",
       },
       textShadow: {
-        'lg': '2px 2px 4px rgba(0, 0, 0, 0.3)',
+        lg: "2px 2px 4px rgba(0, 0, 0, 0.3)",
       },
     },
   },
   plugins: [
     require("tailwindcss-animate"),
-    function ({ addUtilities }) {
+    function({ addUtilities }) {
       const newUtilities = {
-        '.pixel-font': {
-          fontFamily: 'monospace',
-          letterSpacing: '0.1em',
-          textRendering: 'pixelated',
+        ".pixel-font": {
+          fontFamily: "monospace",
+          letterSpacing: "0.1em",
+          textRendering: "pixelated",
         },
-        '.text-shadow-lg': {
-          textShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)',
+        ".text-shadow-lg": {
+          textShadow: "2px 2px 4px rgba(0, 0, 0, 0.3)",
         },
-      }
-      addUtilities(newUtilities)
+        ".perspective-1000": {
+          perspective: "1000px",
+        },
+        ".backface-hidden": {
+          backfaceVisibility: "hidden",
+          transform: "rotateX(0)",
+        },
+        ".transform-style-preserve-3d": {
+          transformStyle: "preserve-3d",
+        },
+        ".rotate-y-180": {
+          transform: "rotateY(180deg)",
+        },
+      };
+      addUtilities(newUtilities);
     },
   ],
-}
+};

@@ -47,7 +47,7 @@
   50% { transform: translateY(-5px); }
 }
 
-/* Adjust spacing for all screen sizes */
+
 .p-6 {
   padding: 1rem !important;
 }
@@ -60,21 +60,21 @@
   gap: 0.5rem !important;
 }
 
-/* Grid adjustments */
+
 @media (min-width: 1024px) {
   .lg\:grid-cols-3 {
     grid-template-columns: repeat(3, minmax(0, .5fr));
   }
 }
 
-/* Tablet grid */
+
 @media (min-width: 768px) and (max-width: 1023px) {
   .md\:grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, .5fr));
   }
 }
 
-/* Mobile adjustments */
+
 @media (max-width: 767px) {
   .content-overlay {
     margin: 0.5rem;
