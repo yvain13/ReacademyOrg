@@ -4,23 +4,15 @@
 
 [build.environment]
   NODE_VERSION = "18.17.0"
-  NPM_VERSION = "9.6.7"
   NEXT_TELEMETRY_DISABLED = "1"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
-[[plugins]]
-  package = "netlify-plugin-cache-nextjs"
-
 [functions]
-  directory = "netlify/functions"
   node_bundler = "esbuild"
 
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
   status = 200
-
-[build.processing]
-  skip_processing = false

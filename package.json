@@ -9,24 +9,24 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "next": "13.5.6",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "openai": "^4.0.0",
-    "pdf-parse": "^1.1.1",
-    "formidable": "^3.5.1",
-    "dotenv": "^16.3.1",
-    "lucide-react": "^0.263.1",
-    "@radix-ui/react-slot": "^1.0.2",
-    "class-variance-authority": "^0.7.0",
-    "clsx": "^2.0.0",
-    "tailwind-merge": "^1.14.0",
-    "tailwindcss-animate": "^1.0.7"
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "openai": "latest",
+    "pdf-parse": "latest",
+    "formidable": "latest",
+    "dotenv": "latest",
+    "lucide-react": "latest",
+    "@radix-ui/react-slot": "latest",
+    "class-variance-authority": "latest",
+    "clsx": "latest",
+    "tailwind-merge": "latest",
+    "tailwindcss-animate": "latest"
   },
   "devDependencies": {
-    "autoprefixer": "^10.4.16",
-    "postcss": "^8.4.31",
-    "tailwindcss": "^3.3.5"
+    "autoprefixer": "latest",
+    "postcss": "latest",
+    "tailwindcss": "latest"
   },
   "engines": {
     "node": ">=18.17.0"
