@@ -102,7 +102,8 @@ export default function Home() {
 
     try {
       console.log('Starting API request...');
-      const response = await fetch('/api/process-pdf', {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
+      const response = await fetch(`${apiUrl}/api/process-pdf`, {
         method: 'POST',
         body: formData,
       });
