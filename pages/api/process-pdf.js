@@ -1,7 +1,7 @@
 import formidable from 'formidable';
 import fs from 'fs';
 import pdfParse from 'pdf-parse';
-import OpenAI from 'openai/index.mjs';
+import OpenAI from 'openai';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,

@@ -1,0 +1,62 @@
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+  .scene-container {
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .parallax-layer {
+    background-size: cover;
+    background-position: center;
+  }
+
+  .content-overlay {
+    margin: 1rem;
+    padding: 1rem;
+  }
+
+  /* Adjust layout for mobile */
+  .flex.gap-8.flex-1 {
+    flex-direction: column;
+  }
+
+  .w-1/2 {
+    width: 100%;
+  }
+
+  /* Adjust card grid for mobile */
+  .grid-cols-2 {
+    grid-template-columns: 1fr;
+  }
+
+  /* Adjust text sizes for mobile */
+  .text-3xl {
+    font-size: 1.875rem;
+  }
+
+  .text-lg {
+    font-size: 1.125rem;
+  }
+
+  /* Improve touch targets on mobile */
+  button {
+    min-height: 44px;
+    padding: 0.75rem 1rem;
+  }
+
+  /* Adjust spacing for mobile */
+  .mb-6 {
+    margin-bottom: 1rem;
+  }
+
+  .gap-4 {
+    gap: 0.75rem;
+  }
+}
+
+/* Tablet styles */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .grid-cols-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
