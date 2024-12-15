@@ -1,0 +1,68 @@
+/* Pixel Art Background */
+.pixel-bg {
+  background-image: linear-gradient(
+    to bottom,
+    rgba(135, 206, 235, 0.8),
+    rgba(135, 206, 235, 0.4)
+  );
+  image-rendering: pixelated;
+}
+
+/* Animated Grass */
+.grass {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 32px;
+  background: repeating-linear-gradient(
+    90deg,
+    #4a9f45,
+    #4a9f45 8px,
+    #3d8b3d 8px,
+    #3d8b3d 16px
+  );
+  animation: sway 3s ease-in-out infinite;
+}
+
+@keyframes sway {
+  0%, 100% {
+    transform: skewX(-5deg);
+  }
+  50% {
+    transform: skewX(5deg);
+  }
+}
+
+/* Floating Particles */
+.particle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.particle:nth-child(odd) {
+  animation: float-up 4s linear infinite;
+}
+
+.particle:nth-child(even) {
+  animation: float-up 6s linear infinite;
+}
+
+@keyframes float-up {
+  0% {
+    transform: translateY(100vh) scale(0);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-100px) scale(1);
+    opacity: 0;
+  }
+}

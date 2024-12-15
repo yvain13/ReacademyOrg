@@ -1,0 +1,274 @@
+/* Scene Styles */
+.scene-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  z-index: 0;
+  background-color: #000;
+}
+
+/* Background Layers */
+.background-mountain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/backgrounds/mountain-bg.png');
+  background-size: cover;
+  background-position: center bottom;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  z-index: 1;
+}
+
+/* Parallax Layers */
+.parallax-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center bottom;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+}
+
+.parallax-2 {
+  background-image: url('/Parallax/parallax2.png');
+  z-index: 2;
+}
+
+.parallax-3a {
+  background-image: url('/Parallax/parallax3a.png');
+  z-index: 3;
+}
+
+.parallax-3b {
+  background-image: url('/Parallax/parallax3b.png');
+  z-index: 4;
+  opacity: 0.3;
+  animation: cloudMove 60s linear infinite;
+}
+
+@keyframes cloudMove {
+  from {
+    transform: translateX(-50px);
+  }
+  to {
+    transform: translateX(50%);
+  }
+}
+
+.parallax-4 {
+  background-image: url('/Parallax/parallax4.png');
+  z-index: 5;
+}
+
+.parallax-7 {
+  background-image: url('/Parallax/parallax7.png');
+  z-index: 6;
+}
+
+.parallax-8 {
+  background-image: url('/Parallax/parallax8.png');
+  z-index: 7;
+}
+
+.background-base {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 52%;
+  background-image: url('/backgrounds/sdv_divider.png');
+  background-size: cover;
+  background-position: bottom;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  z-index: 10;
+}
+
+/* Flying Birds */
+.bird {
+  position: absolute;
+  width: 60px;
+  height: 35px;
+  background-image: url('/backgrounds/bird.gif');
+  background-size: contain;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  pointer-events: none;
+  z-index: 8;
+  animation: flyAcross 20s linear infinite;
+}
+
+@keyframes flyAcross {
+  from {
+    transform: translateX(calc(100vw + 100px));
+  }
+  to {
+    transform: translateX(-100px);
+  }
+}
+
+/* Campfire */
+.campfire {
+  position: absolute;
+  width: 25%;
+  height: 34%;
+  background-image: url(/backgrounds/campfire.gif);
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  pointer-events: none;
+  z-index: 11;
+  
+}
+
+
+
+
+.mountain-backdrop {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  background: linear-gradient(180deg, #4a9f45 0%, #3d8b3d 100%);
+  clip-path: polygon(
+    0% 100%,
+    10% 80%,
+    20% 90%,
+    30% 70%,
+    40% 85%,
+    50% 60%,
+    60% 80%,
+    70% 65%,
+    80% 85%,
+    90% 70%,
+    100% 100%
+  );
+}
+
+.character {
+  position: absolute;
+  bottom: 60px;
+  left: 50%;
+  width: 32px;
+  height: 48px;
+  background-image: url('/farmer.png');
+  background-size: 128px 48px;
+  animation: walkAnimation 0.8s steps(4) infinite,
+             moveRight 20s linear infinite;
+  image-rendering: pixelated;
+}
+
+.farm-house {
+  position: absolute;
+  bottom: 60px;
+  right: 100px;
+  width: 96px;
+  height: 96px;
+  background-image: url('/house.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+}
+
+.crops {
+  position: absolute;
+  bottom: 40px;
+  left: 100px;
+  display: flex;
+  gap: 16px;
+}
+
+.crop {
+  width: 32px;
+  height: 32px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  animation: grow 3s ease-in-out infinite;
+}
+
+.tree {
+  position: absolute;
+  bottom: 60px;
+  width: 64px;
+  height: 96px;
+  background-image: url('/tree.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+}
+
+.tree:nth-child(1) { left: 10%; }
+.tree:nth-child(2) { left: 80%; }
+
+@keyframes walkAnimation {
+  from { background-position: 0px; }
+  to { background-position: -128px; }
+}
+
+@keyframes moveRight {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100vw); }
+}
+
+@keyframes grow {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+/* Stars */
+.stars {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60%;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.star {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: white;
+  border-radius: 50%;
+  animation: twinkle 1.5s infinite ease-in-out;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 1; }
+}
+
+/* Generate multiple stars with different positions and animation delays */
+.star:nth-child(1) { top: 10%; left: 20%; animation-delay: 0s; }
+.star:nth-child(2) { top: 15%; left: 50%; animation-delay: 0.3s; }
+.star:nth-child(3) { top: 25%; left: 80%; animation-delay: 0.6s; }
+.star:nth-child(4) { top: 30%; left: 30%; animation-delay: 0.9s; }
+.star:nth-child(5) { top: 35%; left: 70%; animation-delay: 1.2s; }
+.star:nth-child(6) { top: 20%; left: 40%; animation-delay: 1.5s; }
+.star:nth-child(7) { top: 40%; left: 60%; animation-delay: 1.8s; }
+.star:nth-child(8) { top: 45%; left: 90%; animation-delay: 2.1s; }
+
+/* Main content container */
+main {
+  position: relative;
+  z-index: 20;
+}
+
+/* Content overlay */
+.content-overlay {
+  position: relative;
+  z-index: 10;
+  padding: 2rem;
+}
