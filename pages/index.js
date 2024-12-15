@@ -102,13 +102,8 @@ export default function Home() {
 
     try {
       console.log('Starting API request...');
-      console.log('Current NODE_ENV:', process.env.NODE_ENV);
-      const apiPath = process.env.NODE_ENV === 'production' 
-        ? '/netlify/functions/process-pdf'
-        : '/api/process-pdf';
-      console.log('Using API path:', apiPath);
-      
-      const response = await fetch(apiPath, {
+      // Always use /api/process-pdf since we've configured the Netlify function to use this path
+      const response = await fetch('/api/process-pdf', {
         method: 'POST',
         body: formData,
       });

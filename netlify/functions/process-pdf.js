@@ -3,14 +3,10 @@ const fs = require('fs');
 const pdfParse = require('pdf-parse');
 const { OpenAI } = require('openai');
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const MAX_PDF_LENGTH = 10000; // 10,000 characters
 
-exports.handler = async function(event, context) {
+export default async function handler(req, context) {
   // Set CORS headers
   const headers = {
     'Access-Control-Allow-Origin': '*',
@@ -19,29 +15,31 @@ exports.handler = async function(event, context) {
   };
 
   // Handle preflight request
-  if (event.httpMethod === 'OPTIONS') {
-    return {
-      statusCode: 204,
-      headers,
-      body: ''
-    };
+  if (req.method === 'OPTIONS') {
+    return new Response('', {
+      status: 204,
+      headers
+    });
   }
 
-  if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      headers,
-      body: JSON.stringify({ message: 'Method not allowed' })
-    };
+  if (req.method !== 'POST') {
+    return new Response(JSON.stringify({ message: 'Method not allowed' }), {
+      status: 405,
+      headers
+    });
   }
 
-  if (!process.env.OPENAI_API_KEY) {
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({ message: 'Server configuration error' })
-    };
+  const apiKey = Netlify.env.get("OPENAI_API_KEY");
+  if (!apiKey) {
+    return new Response(JSON.stringify({ message: 'Server configuration error' }), {
+      status: 500,
+      headers
+    });
   }
+
+  const openai = new OpenAI({
+    apiKey: apiKey,
+  });
 
   try {
     // Parse the multipart form data
@@ -50,7 +48,7 @@ exports.handler = async function(event, context) {
     });
 
     const { fields, files } = await new Promise((resolve, reject) => {
-      form.parse(event, (err, fields, files) => {
+      form.parse(req, (err, fields, files) => {
         if (err) reject(err);
         else resolve({ fields, files });
       });
@@ -58,11 +56,10 @@ exports.handler = async function(event, context) {
 
     const pdfFile = files.pdf?.[0];
     if (!pdfFile) {
-      return {
-        statusCode: 400,
-        headers,
-        body: JSON.stringify({ message: 'No PDF file uploaded' })
-      };
+      return new Response(JSON.stringify({ message: 'No PDF file uploaded' }), {
+        status: 400,
+        headers
+      });
     }
 
     // Read and parse the PDF
@@ -70,13 +67,12 @@ exports.handler = async function(event, context) {
     const pdfData = await pdfParse(dataBuffer);
 
     if (pdfData.text.length > MAX_PDF_LENGTH) {
-      return {
-        statusCode: 400,
-        headers,
-        body: JSON.stringify({ 
-          message: 'PDF content is too long. Please use a shorter document (maximum 10,000 characters).' 
-        })
-      };
+      return new Response(JSON.stringify({ 
+        message: 'PDF content is too long. Please use a shorter document (maximum 10,000 characters).' 
+      }), {
+        status: 400,
+        headers
+      });
     }
 
     // Generate flashcards using OpenAI
@@ -144,14 +140,13 @@ ${pdfData.text}`;
       }
 
     } catch (parseError) {
-      return {
-        statusCode: 422,
-        headers,
-        body: JSON.stringify({ 
-          message: 'Error generating flashcards. Please try again.',
-          error: parseError.message
-        })
-      };
+      return new Response(JSON.stringify({ 
+        message: 'Error generating flashcards. Please try again.',
+        error: parseError.message
+      }), {
+        status: 422,
+        headers
+      });
     }
 
     // Clean up the temporary file
@@ -161,25 +156,28 @@ ${pdfData.text}`;
       console.error('Error cleaning up temp file:', unlinkError);
     }
 
-    return {
-      statusCode: 200,
-      headers,
-      body: JSON.stringify({
-        success: true,
-        message: 'PDF processed successfully',
-        flashcards
-      })
-    };
+    return new Response(JSON.stringify({
+      success: true,
+      message: 'PDF processed successfully',
+      flashcards
+    }), {
+      status: 200,
+      headers
+    });
 
   } catch (error) {
     console.error('Error processing request:', error);
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({ 
-        success: false,
-        message: error.message || 'Error processing PDF'
-      })
-    };
+    return new Response(JSON.stringify({ 
+      success: false,
+      message: error.message || 'Error processing PDF'
+    }), {
+      status: 500,
+      headers
+    });
   }
+}
+
+// Configure the function path
+export const config = {
+  path: "/api/process-pdf"
 };
