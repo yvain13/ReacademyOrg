@@ -9,12 +9,14 @@
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
-# Ensure dependencies are installed
-[build.processing]
-  skip_processing = false
+[[plugins]]
+  package = "netlify-plugin-cache-nextjs"
 
-# Handle API routes
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
 [[redirects]]
   from = "/api/*"
-  to = "/.netlify/functions/api/:splat"
+  to = "/.netlify/functions/:splat"
   status = 200
