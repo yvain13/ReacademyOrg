@@ -191,3 +191,55 @@
 .pokemon-mega-y {
   background-image: url('/pokemon/mega-charizard-y.png');
 }
+
+.pokemon-card-mini {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.pokemon-card-mini::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  transform: rotate(45deg);
+  animation: shimmer 2s infinite;
+}
+
+.active .pokemon-card-mini {
+  border-color: rgba(74, 112, 35, 0.6);
+  box-shadow: 
+    0 0 15px rgba(74, 112, 35, 0.3),
+    inset 0 0 20px rgba(74, 112, 35, 0.1);
+  transform: scale(1.05);
+}
+
+.completed .pokemon-card-mini {
+  border-color: rgba(255, 223, 0, 0.6);
+  box-shadow: 
+    0 0 20px rgba(255, 223, 0, 0.2),
+    inset 0 0 25px rgba(255, 223, 0, 0.1);
+}
+
+.progress-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0.5rem 0;
+  font-family: 'VT323', monospace;
+}

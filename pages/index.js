@@ -41,6 +41,45 @@ export default function Home() {
     },
   ];
 
+  const pokemonProgress = [
+    {
+      stage: 'Beginner',
+      pokemon: 'charmander',
+      description: 'Created first flashcard deck',
+      progress: 0,
+      cards: 0,
+      required: 10,
+      unlocked: true
+    },
+    {
+      stage: 'Intermediate',
+      pokemon: 'charmeleon',
+      description: 'Master your first deck',
+      progress: 0,
+      cards: 0,
+      required: 25,
+      unlocked: false
+    },
+    {
+      stage: 'Advanced',
+      pokemon: 'charizard',
+      description: 'Create multiple decks',
+      progress: 0,
+      cards: 0,
+      required: 50,
+      unlocked: false
+    },
+    {
+      stage: 'Expert',
+      pokemon: 'mega-charizard-x',
+      description: 'Complete all challenges',
+      progress: 0,
+      cards: 0,
+      required: 100,
+      unlocked: false
+    }
+  ];
+
   const handleDrag = (e) => {
     e.preventDefault();
     e.stopPropagation();

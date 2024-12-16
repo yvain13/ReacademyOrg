@@ -5,6 +5,30 @@ import Link from 'next/link';
 export default function Landing() {
   const [isLoaded, setIsLoaded] = useState(false);
 
+  const pokemonCards = [
+    {
+      name: 'Starter Deck',
+      icon: '🎴',
+      pokemon: '/pokemon/charmander.png',
+      description: 'Begin your journey with basic flashcards',
+      evolution: 'Charmander Level'
+    },
+    {
+      name: 'Evolution Deck',
+      icon: '🔥',
+      pokemon: '/pokemon/charizard.png',
+      description: 'Power up your learning with advanced cards',
+      evolution: 'Charizard Level'
+    },
+    {
+      name: 'Mega Evolution',
+      icon: '⚡',
+      pokemon: '/pokemon/mega-charizard-x.png',
+      description: 'Master complex topics with mega evolved cards',
+      evolution: 'Mega Evolution X'
+    }
+  ];
+
   useEffect(() => {
     setIsLoaded(true);
   }, []);
@@ -55,35 +79,40 @@ export default function Landing() {
                 Reacademy.ai
               </h1>
               <p className="text-2xl text-white mb-8 text-shadow-lg">
-                Transform Your Learning Journey
+                Evolve Your Learning Journey with Pokemon-Powered Flashcards
               </p>
               <Link 
                 href="/"
-                className="px-8 py-4 bg-green-500 text-white rounded-lg hover:bg-green-600"
+                className="px-8 py-4 bg-green-500 text-white rounded-lg hover:bg-green-600 transform hover:scale-105 transition-all"
               >
-                Start Learning
+                Start Your Journey
               </Link>
             </div>
 
-            {/* Features Grid */}
+            {/* Pokemon Cards Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-              <div className="bg-white/10 backdrop-blur-md p-6 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300 text-white">
-                <div className="text-4xl mb-4">📚</div>
-                <h3 className="text-xl font-bold mb-2">PDF to Flashcards</h3>
-                <p className="text-gray-200">Convert any PDF into interactive flashcards instantly</p>
-              </div>
-
-              <div className="bg-white/10 backdrop-blur-md p-6 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300 text-white">
-                <div className="text-4xl mb-4">🤖</div>
-                <h3 className="text-xl font-bold mb-2">AI-Powered</h3>
-                <p className="text-gray-200">Smart learning algorithms adapt to your needs</p>
-              </div>
-
-              <div className="bg-white/10 backdrop-blur-md p-6 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300 text-white">
-                <div className="text-4xl mb-4">🎮</div>
-                <h3 className="text-xl font-bold mb-2">Gamified Learning</h3>
-                <p className="text-gray-200">Make studying fun and engaging</p>
-              </div>
+              {pokemonCards.map((card, index) => (
+                <div 
+                  key={card.name}
+                  className="pokemon-card group relative"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-0 group-hover:opacity-50 transition-opacity duration-300" />
+                  <div className="relative bg-white/10 backdrop-blur-md p-6 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300">
+                    <div className="pokemon-card-inner">
+                      <img 
+                        src={card.pokemon}
+                        alt={card.name}
+                        className="w-32 h-32 mx-auto mb-4 transform group-hover:scale-110 transition-transform duration-300"
+                        style={{ imageRendering: 'pixelated' }}
+                      />
+                      <div className="text-4xl mb-4">{card.icon}</div>
+                      <h3 className="text-xl font-bold mb-2 text-yellow-400">{card.name}</h3>
+                      <p className="text-gray-200 mb-2">{card.description}</p>
+                      <span className="text-sm text-green-400">{card.evolution}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
