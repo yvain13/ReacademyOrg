@@ -133,17 +133,17 @@ export default function Home() {
         body: formData,
       });
   
-      const data = await response.json();
-  
       if (!response.ok) {
-        throw new Error(data.error || 'Error processing PDF');
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Server error: ${response.status}`);
       }
   
+      const data = await response.json();
       setFlashcards(data.flashcards);
       setActiveCategory(1); // Start with the first category
     } catch (err) {
       console.error('Upload error:', err);
-      setError(err.message);
+      setError(err.message || 'Failed to process PDF');
     } finally {
       setLoading(false);
     }
