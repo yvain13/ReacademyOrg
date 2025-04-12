@@ -128,19 +128,31 @@ export default function Home() {
     formData.append('pdf', file);
   
     try {
-      const response = await fetch('/api/process-pdf', {
+      const response = await fetch('/.netlify/functions/process-pdf', {
         method: 'POST',
         body: formData,
       });
   
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `Server error: ${response.status}`);
+      const responseText = await response.text();
+      
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('JSON parse error:', parseError, 'Response text:', responseText.substring(0, 200));
+        throw new Error('Invalid response format from server');
       }
-  
-      const data = await response.json();
-      setFlashcards(data.flashcards);
-      setActiveCategory(1); // Start with the first category
+      
+      if (!response.ok) {
+        throw new Error(data.error || `Server error: ${response.status}`);
+      }
+      
+      if (data.flashcards && Array.isArray(data.flashcards)) {
+        setFlashcards(data.flashcards);
+        setActiveCategory(1); // Start with the first category
+      } else {
+        throw new Error('Invalid flashcards data returned from server');
+      }
     } catch (err) {
       console.error('Upload error:', err);
       setError(err.message || 'Failed to process PDF');
@@ -178,7 +190,6 @@ export default function Home() {
     setCurrentCardIndex(index);
   };
 
-  // Filter cards by current category
   const currentCategoryCards = flashcards.filter(card => card.category === activeCategory);
 
   return (

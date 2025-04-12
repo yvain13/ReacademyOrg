@@ -15,9 +15,10 @@
   included_files = ["package.json"]
   external_node_modules = ["formidable", "pdf-parse"]
 
+# This redirect is crucial for API routes in Next.js to work correctly
 [[redirects]]
   from = "/api/*"
-  to = "/.netlify/functions/:splat"
+  to = "/.netlify/functions/nextjs-server"
   status = 200
   force = true
 
@@ -27,3 +28,9 @@
     Access-Control-Allow-Origin = "*"
     Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
     Access-Control-Allow-Headers = "*"
+
+[dev]
+  framework = "next"
+  targetPort = 3001
+  functionsPort = 8889
+  autoLaunch = true

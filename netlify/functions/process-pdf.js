@@ -1,23 +1,10 @@
-import pdfParse from 'pdf-parse';
-import OpenAI from 'openai';
-import { IncomingForm } from 'formidable';
+const { createReadStream } = require('fs');
+const { IncomingForm } = require('formidable');
+const pdfParse = require('pdf-parse');
+const { OpenAI } = require('openai');
+const busboy = require('busboy');
 
-// Disable body parsing, we'll handle it
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
-
-// Function to convert base64 to buffer
-function base64ToBuffer(base64) {
-  const base64Str = base64.includes('base64,') 
-    ? base64.split('base64,')[1] 
-    : base64;
-  return Buffer.from(base64Str, 'base64');
-}
-
-// Function to safely parse JSON with fallback
+// Function to safely parse JSON with fallbacks
 function safeJsonParse(str) {
   try {
     // First attempt: direct parse
@@ -42,81 +29,6 @@ function safeJsonParse(str) {
   }
 }
 
-// Function to read raw file data from request
-const readFileFromRequest = (req) => {
-  return new Promise((resolve, reject) => {
-    let fileData = [];
-    
-    req.on('data', (chunk) => {
-      fileData.push(chunk);
-    });
-    
-    req.on('end', () => {
-      try {
-        const buffer = Buffer.concat(fileData);
-        resolve(buffer);
-      } catch (error) {
-        reject(error);
-      }
-    });
-    
-    req.on('error', (error) => {
-      reject(error);
-    });
-  });
-};
-
-// Function to extract PDF data from multipart form
-const extractPdfFromMultipart = async (req) => {
-  return new Promise((resolve, reject) => {
-    const form = new IncomingForm({ 
-      keepExtensions: true,
-      multiples: false,
-    });
-    
-    form.parse(req, async (err, fields, files) => {
-      if (err) {
-        return reject(err);
-      }
-      
-      try {
-        // Get first file regardless of field name
-        const fileKey = Object.keys(files)[0];
-        const file = files[fileKey]?.[0] || files[fileKey];
-        
-        if (!file) {
-          return reject(new Error('No file found in request'));
-        }
-        
-        // Handle both filepath (local) and buffer (serverless) cases
-        let pdfBuffer;
-        
-        if (file.filepath) {
-          // Local environment
-          const fs = await import('fs/promises');
-          pdfBuffer = await fs.readFile(file.filepath);
-          
-          // Clean up
-          try {
-            await fs.unlink(file.filepath);
-          } catch (error) {
-            console.warn('Failed to clean up temp file:', error);
-          }
-        } else if (file.buffer) {
-          // Some serverless environments
-          pdfBuffer = file.buffer;
-        } else {
-          return reject(new Error('Cannot read file data'));
-        }
-        
-        resolve(pdfBuffer);
-      } catch (error) {
-        reject(error);
-      }
-    });
-  });
-};
-
 // Format the flashcards into a consistent structure
 function formatFlashcards(cards) {
   // Ensure we have valid data
@@ -134,35 +46,67 @@ function formatFlashcards(cards) {
   })).slice(0, 15); // Ensure we have exactly 15 cards maximum
 }
 
-// Main handler
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+exports.handler = async function(event, context) {
+  // Only allow POST requests
+  if (event.httpMethod !== 'POST') {
+    return {
+      statusCode: 405,
+      body: JSON.stringify({ error: 'Method not allowed' })
+    };
   }
 
   try {
-    // Check content type to determine how to handle the request
-    const contentType = req.headers['content-type'] || '';
+    // Use busboy to parse the multipart form data
+    const buf = Buffer.from(event.body, 'base64');
+    const contentType = event.headers['content-type'] || '';
     
-    let pdfBuffer;
-    
-    if (contentType.includes('multipart/form-data')) {
-      // Handle multipart form data
-      pdfBuffer = await extractPdfFromMultipart(req);
-    } else if (contentType.includes('application/json')) {
-      // Handle JSON with base64
-      const rawData = await readFileFromRequest(req);
-      const { pdf } = JSON.parse(rawData.toString());
-      
-      if (!pdf) {
-        return res.status(400).json({ error: 'No PDF data found in request' });
-      }
-      
-      pdfBuffer = base64ToBuffer(pdf);
-    } else {
-      // Handle raw binary
-      pdfBuffer = await readFileFromRequest(req);
+    // If this isn't multipart, return an error
+    if (!contentType.includes('multipart/form-data')) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: 'Invalid content type. Expected multipart/form-data' })
+      };
     }
+    
+    // Parse the PDF data using busboy
+    const pdfBuffer = await new Promise((resolve, reject) => {
+      const bb = busboy({ headers: { 'content-type': contentType } });
+      let buffer = null;
+      
+      bb.on('file', (fieldname, file, info) => {
+        const { filename, encoding, mimeType } = info;
+        console.log(`Processing file: ${filename}, type: ${mimeType}`);
+        
+        if (!mimeType.includes('application/pdf')) {
+          reject(new Error('Only PDF files are supported'));
+          return;
+        }
+        
+        const chunks = [];
+        file.on('data', (data) => {
+          chunks.push(data);
+        });
+        
+        file.on('end', () => {
+          buffer = Buffer.concat(chunks);
+        });
+      });
+      
+      bb.on('finish', () => {
+        if (!buffer) {
+          reject(new Error('No PDF file found in request'));
+          return;
+        }
+        resolve(buffer);
+      });
+      
+      bb.on('error', (err) => {
+        reject(err);
+      });
+      
+      bb.write(buf);
+      bb.end();
+    });
     
     // Limit PDF text length to prevent token overflow
     const maxTextLength = process.env.MAX_PDF_LENGTH || 10000;
@@ -225,14 +169,32 @@ ${pdfText}`
     // Format flashcards to ensure consistent structure
     const flashcards = formatFlashcards(rawFlashcards);
 
-    // Send response
-    res.status(200).json({ flashcards });
-
+    // Return success response
+    return {
+      statusCode: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS'
+      },
+      body: JSON.stringify({ flashcards })
+    };
   } catch (error) {
     console.error('Error processing PDF:', error);
-    res.status(500).json({ 
-      error: error.message,
-      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
-    });
+    
+    return {
+      statusCode: 500,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS'
+      },
+      body: JSON.stringify({ 
+        error: error.message,
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      })
+    };
   }
-}
+};
