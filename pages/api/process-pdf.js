@@ -168,7 +168,21 @@ export default async function handler(req, res) {
     const maxTextLength = process.env.MAX_PDF_LENGTH || 10000;
     
     // Parse PDF
-    const pdfData = await pdfParse(pdfBuffer);
+    const pdfData = await pdfParse(pdfBuffer, {
+      max: maxTextLength, // Limit processed text
+      pagerender: function(pageData) {
+        // Custom page renderer to skip problematic font commands
+        try {
+          return pageData.getTextContent({ 
+            disableCombineTextItems: false,
+            normalizeWhitespace: true
+          });
+        } catch (err) {
+          console.warn(`Warning: Error rendering page: ${err.message}`);
+          return { items: [] }; // Return empty content for problematic pages
+        }
+      }
+    });
     const pdfText = pdfData.text.substring(0, maxTextLength);
     
     // Initialize OpenAI

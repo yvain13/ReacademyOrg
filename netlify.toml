@@ -15,6 +15,10 @@
   included_files = ["package.json"]
   external_node_modules = ["formidable", "pdf-parse"]
 
+[functions.process-pdf]
+  included_files = ["**/*.pdf"]
+  timeout = "30s"
+
 # This redirect is crucial for API routes in Next.js to work correctly
 [[redirects]]
   from = "/api/*"
