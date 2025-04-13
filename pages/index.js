@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Head from 'next/head';
-import { UploadCloud, Heart } from 'lucide-react';
+import Link from 'next/link';
+import { UploadCloud } from 'lucide-react';
 
 export default function Home() {
   const [file, setFile] = useState(null);
@@ -10,8 +11,8 @@ export default function Home() {
   const [dragActive, setDragActive] = useState(false);
   const [error, setError] = useState(null);
   const [activeCategory, setActiveCategory] = useState(1);
-  const [favorites, setFavorites] = useState(new Set());
-  const [currentCardIndex, setCurrentCardIndex] = useState(0);
+  const [showAllCards, setShowAllCards] = useState(false);
+  const [showCompletionMessage, setShowCompletionMessage] = useState(false);
 
   const pokemonStages = [
     { 
@@ -39,45 +40,6 @@ export default function Home() {
       image: '/pokemon/mega-charizard-y.png',
       description: 'Master Level'
     },
-  ];
-
-  const pokemonProgress = [
-    {
-      stage: 'Beginner',
-      pokemon: 'charmander',
-      description: 'Created first flashcard deck',
-      progress: 0,
-      cards: 0,
-      required: 10,
-      unlocked: true
-    },
-    {
-      stage: 'Intermediate',
-      pokemon: 'charmeleon',
-      description: 'Master your first deck',
-      progress: 0,
-      cards: 0,
-      required: 25,
-      unlocked: false
-    },
-    {
-      stage: 'Advanced',
-      pokemon: 'charizard',
-      description: 'Create multiple decks',
-      progress: 0,
-      cards: 0,
-      required: 50,
-      unlocked: false
-    },
-    {
-      stage: 'Expert',
-      pokemon: 'mega-charizard-x',
-      description: 'Complete all challenges',
-      progress: 0,
-      cards: 0,
-      required: 100,
-      unlocked: false
-    }
   ];
 
   const handleDrag = (e) => {
@@ -168,29 +130,24 @@ export default function Home() {
     }));
   };
 
-  const toggleFavorite = (index) => {
-    setFavorites(prev => {
-      const newFavorites = new Set(prev);
-      if (newFavorites.has(index)) {
-        newFavorites.delete(index);
-      } else {
-        newFavorites.add(index);
-      }
-      return newFavorites;
-    });
-  };
-
   const completeCategory = (category) => {
     if (category < 5) {
       setActiveCategory(category + 1);
+    } else {
+      // Show all cards and the congratulations message when all levels are completed
+      setShowAllCards(true);
+      setShowCompletionMessage(true);
     }
   };
 
   const handleCardClick = (index) => {
-    setCurrentCardIndex(index);
+    // Removed currentCardIndex state and associated logic
   };
 
-  const currentCategoryCards = flashcards.filter(card => card.category === activeCategory);
+  // Get cards for the current category, or all cards if all levels completed
+  const currentCategoryCards = showAllCards 
+    ? flashcards 
+    : flashcards.filter(card => card.category === activeCategory);
 
   return (
     <>
@@ -246,9 +203,7 @@ export default function Home() {
                           ? 'active' 
                           : index + 1 < activeCategory 
                             ? 'completed' 
-                            : index + 1 > activeCategory 
-                              ? 'locked'
-                              : ''
+                            : 'locked'
                       }`}
                     >
                       <div 
@@ -260,19 +215,18 @@ export default function Home() {
                       <div className="pokemon-info">
                         <div className="pokemon-name text-white">{pokemon.name}</div>
                         <div className="pokemon-description text-gray-300">{pokemon.description}</div>
-                        {index + 1 === activeCategory && (
-                          <div className="progress-bar">
-                            <div 
-                              className="progress-fill"
-                              style={{ 
-                                width: `${(currentCardIndex / 3) * 100}%`
-                              }}
-                            />
-                          </div>
-                        )}
                       </div>
                     </div>
                   ))}
+                  
+                  <div className="mt-6">
+                    <Link 
+                      href="/landing" 
+                      className="flex items-center justify-center px-4 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors"
+                    >
+                      Back to Landing Page
+                    </Link>
+                  </div>
                 </div>
               </div>
 
@@ -328,14 +282,16 @@ export default function Home() {
                   <div className="space-y-6">
                     <div className="flex justify-between items-center">
                       <h2 className="text-2xl font-bold text-yellow-400">
-                        Level {activeCategory} Flashcards
+                        {showAllCards ? 'All Flashcards' : `Level ${activeCategory} Flashcards`}
                       </h2>
-                      <button
-                        onClick={() => completeCategory(activeCategory)}
-                        className="px-4 py-2 bg-green-500 text-white rounded-full hover:bg-green-600"
-                      >
-                        Complete Level
-                      </button>
+                      {!showAllCards && (
+                        <button
+                          onClick={() => completeCategory(activeCategory)}
+                          className="px-4 py-2 bg-green-500 text-white rounded-full hover:bg-green-600"
+                        >
+                          Complete Level
+                        </button>
+                      )}
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       {currentCategoryCards.map((card, index) => (
@@ -351,27 +307,43 @@ export default function Home() {
                               : 'bg-white/10 backdrop-blur-md'}`}
                         >
                           <div className="absolute inset-0 p-4 flex flex-col">
-                            <div className="flex justify-end">
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  toggleFavorite(index);
-                                }}
-                                className="text-gray-400 hover:text-red-500"
-                              >
-                                <Heart
-                                  className={favorites.has(index) ? 'fill-current text-red-500' : ''}
-                                />
-                              </button>
-                            </div>
                             <div className="flex-1 flex items-center justify-center text-center">
                               <p className="text-white">
                                 {flippedCards[index] ? card.answer : card.question}
                               </p>
                             </div>
+                            {showAllCards && (
+                              <div className="mt-2 text-xs text-yellow-400 text-center">
+                                Level {card.category}
+                              </div>
+                            )}
                           </div>
                         </div>
                       ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Congratulations message when all levels are completed */}
+                {showCompletionMessage && (
+                  <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/70">
+                    <div className="bg-white/20 backdrop-blur-md p-8 rounded-lg text-center max-w-md">
+                      <h2 className="text-3xl font-bold text-yellow-400 mb-4">Congratulations!</h2>
+                      <p className="text-white text-xl mb-6">You have successfully completed all the levels! Now you can review all your flashcards.</p>
+                      <div className="flex flex-col space-y-3">
+                        <button
+                          onClick={() => setShowCompletionMessage(false)}
+                          className="px-6 py-2 bg-green-500 text-white rounded-full hover:bg-green-600"
+                        >
+                          View All Cards
+                        </button>
+                        <Link 
+                          href="/landing" 
+                          className="px-6 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 flex items-center justify-center"
+                        >
+                          Back to Landing Page
+                        </Link>
+                      </div>
                     </div>
                   </div>
                 )}
